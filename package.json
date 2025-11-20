@@ -1,0 +1,35 @@
+{
+  "name": "js-otel-instrumentation-express",
+  "version": "1.0.0",
+  "description": "OpenTelemetry instrumentation-express - Reproduce missing http.route ",
+  "keywords": [
+    "opentelemetry",
+    "javascript",
+    "express",
+    "opentelemetry-instrumentation-express"
+  ],
+  "homepage": "https://github.com/vitorvasc/js-otel-instrumentation-express#readme",
+  "bugs": {
+    "url": "https://github.com/vitorvasc/js-otel-instrumentation-express/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/vitorvasc/js-otel-instrumentation-express.git"
+  },
+  "license": "ISC",
+  "author": "Vitor Vasconcellos",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/instrumentation-express": "^0.57.0",
+    "@opentelemetry/instrumentation-http": "^0.208.0",
+    "@opentelemetry/sdk-metrics": "^2.2.0",
+    "@opentelemetry/sdk-node": "^0.208.0",
+    "@opentelemetry/sdk-trace-node": "^2.2.0",
+    "express": "^5.1.0"
+  }
+}
