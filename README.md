@@ -24,12 +24,6 @@ All early returns from the same router produce identical metrics, losing route-l
 ## Installation
 
 ```bash
-
-```
-
-## Running the Reproduction
-
-```bash
 npm install
 node main.js
 ```
