@@ -93,8 +93,8 @@ apiRouter.get('/products', (req, res) => {
   });
 });
 
-// Mount main router at / on the app
-app.use('/', apiRouter);
+// Mount main router at /api on the app
+app.use('/api', apiRouter);
 
 // Start server
 app.listen(port, () => {
