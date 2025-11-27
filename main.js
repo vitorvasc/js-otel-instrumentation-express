@@ -10,11 +10,13 @@
  */
 
 const { NodeSDK } = require('@opentelemetry/sdk-node');
-const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-node');
 const {
-  PeriodicExportingMetricReader,
-  ConsoleMetricExporter,
-} = require('@opentelemetry/sdk-metrics');
+  OTLPTraceExporter,
+} = require('@opentelemetry/exporter-trace-otlp-grpc');
+const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
+const {
+  OTLPMetricExporter,
+} = require('@opentelemetry/exporter-metrics-otlp-grpc');
 const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http');
 const {
   ExpressInstrumentation,
@@ -22,9 +24,13 @@ const {
 
 // Initialize OpenTelemetry SDK
 const sdk = new NodeSDK({
-  traceExporter: new ConsoleSpanExporter(),
+  traceExporter: new OTLPTraceExporter({
+    url: 'http://localhost:4317',
+  }),
   metricReader: new PeriodicExportingMetricReader({
-    exporter: new ConsoleMetricExporter(),
+    exporter: new OTLPMetricExporter({
+      url: 'http://localhost:4317',
+    }),
     exportIntervalMillis: 3000,
   }),
   instrumentations: [
@@ -50,8 +56,15 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(async function simpleMiddleware(req, res, next) {
+  next();
+});
+
 // API-specific router (mounted at /api within main router)
-const apiRouter = express.Router();
+const apiRouter = express.Router()
+
+const usersRouter = express.Router();
+const productsRouter = express.Router();
 
 // ETag validation middleware - returns early on cache hit
 apiRouter.use([
@@ -77,7 +90,7 @@ apiRouter.use([
 ]);
 
 // Define routes on the API router
-apiRouter.get('/users', (req, res) => {
+usersRouter.get('/users', (req, res) => {
   console.log('[Route Handler] GET /users executed');
   res.json({
     message: 'Users list',
@@ -85,7 +98,7 @@ apiRouter.get('/users', (req, res) => {
   });
 });
 
-apiRouter.get('/products', (req, res) => {
+productsRouter.get('/products', (req, res) => {
   console.log('[Route Handler] GET /products executed');
   res.json({
     message: 'Products list',
@@ -94,7 +107,10 @@ apiRouter.get('/products', (req, res) => {
 });
 
 // Mount main router at / on the app
-app.use('/', apiRouter);
+apiRouter.use('/api', usersRouter);
+apiRouter.use('/api', productsRouter);
+
+app.use(apiRouter);
 
 // Start server
 app.listen(port, () => {
