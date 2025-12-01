@@ -10,11 +10,13 @@
  */
 
 const { NodeSDK } = require('@opentelemetry/sdk-node');
-const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-node');
 const {
-  PeriodicExportingMetricReader,
-  ConsoleMetricExporter,
-} = require('@opentelemetry/sdk-metrics');
+  OTLPTraceExporter,
+} = require('@opentelemetry/exporter-trace-otlp-grpc');
+const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
+const {
+  OTLPMetricExporter,
+} = require('@opentelemetry/exporter-metrics-otlp-grpc');
 const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http');
 const {
   ExpressInstrumentation,
@@ -22,9 +24,13 @@ const {
 
 // Initialize OpenTelemetry SDK
 const sdk = new NodeSDK({
-  traceExporter: new ConsoleSpanExporter(),
+  traceExporter: new OTLPTraceExporter({
+    url: 'http://localhost:4317',
+  }),
   metricReader: new PeriodicExportingMetricReader({
-    exporter: new ConsoleMetricExporter(),
+    exporter: new OTLPMetricExporter({
+      url: 'http://localhost:4317',
+    }),
     exportIntervalMillis: 3000,
   }),
   instrumentations: [
