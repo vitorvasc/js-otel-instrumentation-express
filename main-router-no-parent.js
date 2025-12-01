@@ -14,6 +14,12 @@ const {
   OTLPTraceExporter,
 } = require('@opentelemetry/exporter-trace-otlp-grpc');
 const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
+const { resourceFromAttributes } = require('@opentelemetry/resources');
+const {
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+  ATTR_SERVICE_NAMESPACE,
+} = require('@opentelemetry/semantic-conventions');
 const {
   OTLPMetricExporter,
 } = require('@opentelemetry/exporter-metrics-otlp-grpc');
@@ -32,6 +38,10 @@ const sdk = new NodeSDK({
       url: 'http://localhost:4317',
     }),
     exportIntervalMillis: 3000,
+  }),
+  resource: resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: 'js-otel-instrumentation-express',
+    [ATTR_SERVICE_VERSION]: '1.0.0',
   }),
   instrumentations: [
     new HttpInstrumentation(),
